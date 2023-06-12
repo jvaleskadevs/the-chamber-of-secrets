@@ -14,11 +14,13 @@
   "private": true,
   "license": "ISC",
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
-    "hardhat": "^2.15.0",
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "hardhat": "^2.15.0"
   },
   "dependencies": {
+    "@lit-protocol/sdk-browser": "^1.1.250",
+    "nft.storage": "^7.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1"
