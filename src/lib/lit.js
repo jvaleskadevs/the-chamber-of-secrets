@@ -1,44 +1,57 @@
 import LitJsSdk from "@lit-protocol/sdk-browser";
+import { CoSAddress } from '../constants';
 
 const client = new LitJsSdk.LitNodeClient();
 const chain = "mumbai";
 
-// Checks if the user has at least 0.1 MATIC
+// Checks if the nonce of this chamber matches the current nonce in the CoS contract
+// Incrementing the nonce breaks the previous nonce, making the CoS CID encrypted forever
+// This allow chamber creators to reuse the same chamber and CoS CID with a different decryption time,
+// and many other things, like pause/unpause the dead man switch in a secure way (more on this later) 
+const evmContractConditions = [
+  {
+    contractAddress: CoSAddress,
+    chain,
+    functionName: "nonces",
+    functionAbi: {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "nonces",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    functionParams: ["0x"], // the address of chamber creator, configured later
+    returnValueTest: {
+      key: "",
+      comparator: "=",
+      value: "0", // current signerNonce+1, configured later
+    }    
+  }
+];
 const accessControlConditions = [
   {
     contractAddress: "",
-    standardContractType: "",
+    standardContractType: "timestamp",
     chain,
-    method: "eth_getBalance",
-    parameters: [":userAddress", "latest"],
+    method: "eth_getBlockByNumber",
+    parameters: ["latest"],
     returnValueTest: {
       comparator: ">=",
-      value: "100000000000000000", // 0.1 MATIC
-    }
-  }
- /* {
-    contractAddress: "0x8E80F503c06aDd4BE47b7561aEF1709e58e52066",
-    standardContractType: "ERC721",
-    chain,
-    method: "ownerOf",
-    parameters: ["1"],
-    returnValueTest: {
-      comparator: "=",
-      value: ":userAddress"
+      value: "1663259602" // eth merge date, always true (Sept 15, 2022)
     },
   },
-  { "operator":"and" },
-  {
-    contractAddress: "0x8E80F503c06aDd4BE47b7561aEF1709e58e52066",
-    standardContractType: "ERC721",
-    chain,
-    method: "isNeville",//"eth_getBalance",
-    parameters: [":userAddress"],//[":userAddress", "latest"],
-    returnValueTest: {
-      comparator: "=",
-      value: "true"//"100000000000000000", // 0.1 MATIC
-    },    
-  }  */
 ];
 
 class Lit {
@@ -48,46 +61,101 @@ class Lit {
     await client.connect();
     this.litNodeClient = client;
   }
-
-  async encryptText(text) {
+  
+  // The auth object contains the signer and the current signerNonce, access control needs them.
+  async encryptText(text, auth) {
     if (!this.litNodeClient) {
       await this.connect();
     }
+    
     const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
+    
     const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(text);
 
+    evmContractConditions[0].functionParams[0] = authSig.address; // chamber creator address
+    evmContractConditions[0].returnValueTest.value = "0"//(parseInt(auth.signerNonce) + 1).toString();
+
     const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
-      accessControlConditions: accessControlConditions,
+      evmContractConditions,
       symmetricKey,
       authSig,
       chain,
     });
 
     return {
-        encryptedString,//: await encryptedString.text(),
-        encryptedSymmetricKey: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16")
+      encryptedString,//: await encryptedString.text(),
+      encryptedSymmetricKey: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16")
     };
   }
 
-  async decryptText(encryptedString, encryptedSymmetricKey) {
+  async decryptText(encryptedString, encryptedSymmetricKey, auth) {
     if (!this.litNodeClient) {
       await this.connect();
     }
 
     const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
+    evmContractConditions[0].functionParams[0] = auth.signer.address;
+    evmContractConditions[0].returnValueTest.value = auth.signerNonce;
+    
     const symmetricKey = await this.litNodeClient.getEncryptionKey({
-        accessControlConditions: accessControlConditions,
-        toDecrypt: encryptedSymmetricKey,
-        chain,
-        authSig
+      evmContractConditions,
+      toDecrypt: encryptedSymmetricKey,
+      chain,
+      authSig
     });
 
     return await LitJsSdk.decryptString(
-        encryptedString,
-        symmetricKey
+      encryptedString,
+      symmetricKey
     );
   }
   
+  // Encrypting files as string without access control condition (nonce)
+  async encryptFile(file) {
+    if (!this.litNodeClient) {
+      await this.connect();
+    }
+    
+    const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
+    
+    const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(file);
+
+    const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
+      accessControlConditions,
+      symmetricKey,
+      authSig,
+      chain
+    });
+
+    return {
+      encryptedFile: encryptedString,
+      encryptedFileAsString: await encryptedString.text(),
+      encryptedSymmetricKey: LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16"),
+      name: file.name,
+      size: file.size
+    };
+  }
+
+  async decryptFile(encryptedFile, encryptedSymmetricKey) {
+    if (!this.litNodeClient) {
+      await this.connect();
+    }
+
+    const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
+    
+    const symmetricKey = await this.litNodeClient.getEncryptionKey({
+      accessControlConditions,
+      toDecrypt: encryptedSymmetricKey,
+      chain,
+      authSig
+    });
+
+    return await LitJsSdk.decryptString(
+      encryptedFile,
+      symmetricKey
+    );
+  }
+/*  
   async encryptFile(file) {
     if (!this.litNodeClient) {
       await this.connect();
@@ -127,10 +195,10 @@ class Lit {
     );
   }
 
-   
+*/   
    
    /**   ENCRYPT to and DECRYPT from IPFS   **/
-
+/*
   async encryptStringToIpfs(string) {
     if (!this.litNodeClient) {
       await this.connect();
@@ -175,6 +243,6 @@ class Lit {
       litNodeClient: this.litNodeClient
     });
   }
+*/
 }
-
 export default new Lit();

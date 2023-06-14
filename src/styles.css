@@ -1,3 +1,94 @@
+body {
+  background-color: black;
+  color: #d5d5d5;
+  font-size: 18px;
+  font-family: mono;
+}
+
+a {
+  color: red;
+  margin: 0.33rem 1.66rem;
+}
+
+h1 {
+  color: white;
+}
+
+h2 {
+  color: #f6f6f6;
+}
+
+p {
+  margin: 0.2rem 0.66rem;
+}
+
+input {
+  background-color: #f2f2f2;
+  padding: 0.88rem 2.22rem;
+  color: black;
+  border-radius: 12px;
+  margin: 0.33rem 1rem;
+  font-size: 18px;
+}
+
+input:hover {
+  cursor: pointer;
+}
+
+input[type=text] {
+  font-size: 18px;
+}
+
+input[type=text]:hover {
+  cursor: initial;
+  border: 2px solid red;
+}
+
+input[type=text]:focus, input[type=text]:active {
+  border: 2px solid red;
+}
+
+button {
+  padding: 0.88rem 2.22rem;
+  margin: 0.33rem 1.66rem;
+  border-radius: 16px;
+  border-color: red;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  border-color: white;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 90%;
+}
+
+.section {
+  border: 2px solid #d5d5d5;
+  border-radius: 20px;
+  background-color: #121212;
+  margin: 2rem auto;
+  padding: 2rem 4rem;
+  max-width: 60%;
+  min-width: 60%;
+  overflow-x: hidden;
+}
+
+.section p {
+  padding: 0.66rem;
+}
+
+.container-cid {
+  margin: 1rem auto;
+}
+
 .container-secretfile {
   margin: 2rem auto;  
 }

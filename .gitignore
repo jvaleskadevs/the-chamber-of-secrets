@@ -1,6 +1,8 @@
 node_modules
 .env
 src/.env.local
+.env.notas
+contracts/ChamberOfSecrets.draft
 coverage
 coverage.json
 typechain
