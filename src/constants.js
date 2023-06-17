@@ -1,4 +1,5 @@
-export const CoSAddress = "0x839AA66E6Ff206A9205278033C0E28B5731B7c7F";//"0x91c5525E51A45f2427b36664a200a0CDE151323E";
+export const CoSAddressMumbai = "0x0f4318580cD57Bd50bfe91e83BfCc938938575d6";
+export const CoSAddressCalibration = "0x715C77C75a5E9bD74F359FC6C0cdac6f617549e6";
 export const CoSAbi = [
     {
       "anonymous": false,
@@ -22,13 +23,13 @@ export const CoSAbi = [
           "type": "address"
         },
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "uint256",
-          "name": "nonce",
+          "name": "index",
           "type": "uint256"
         }
       ],
-      "name": "CoS",
+      "name": "NewCoS",
       "type": "event"
     },
     {
@@ -44,7 +45,7 @@ export const CoSAbi = [
           "type": "uint256"
         }
       ],
-      "name": "cos",
+      "name": "addCoS",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -52,16 +53,31 @@ export const CoSAbi = [
     {
       "inputs": [
         {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "chambers",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "cid",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "decryptionTime",
+          "type": "uint256"
+        },
+        {
           "internalType": "address",
           "name": "owner",
           "type": "address"
-        }
-      ],
-      "name": "getNonce",
-      "outputs": [
+        },
         {
           "internalType": "uint256",
-          "name": "",
+          "name": "index",
           "type": "uint256"
         }
       ],
@@ -69,14 +85,8 @@ export const CoSAbi = [
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "nonces",
+      "inputs": [],
+      "name": "totalCoS",
       "outputs": [
         {
           "internalType": "uint256",

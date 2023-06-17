@@ -15,15 +15,6 @@ async function main() {
   console.log(
     `ChamberOfSecrets deployed to ${ChamberOfSecrets.target}`
   );
-  
-  /*  Test
-  let receipt = await ChamberOfSecrets.cos("babefjtesting", 1234);
-  console.log(receipt);
-  receipt = await ChamberOfSecrets.cos("", 0);
-  console.log(receipt);
-
-  console.log(await ChamberOfSecrets.nonces(signer));
-  */
 }
 
 // We recommend this pattern to be able to use async/await everywhere

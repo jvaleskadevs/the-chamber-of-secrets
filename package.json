@@ -10,9 +10,9 @@
     "eject": "react-scripts eject"
   },
   "keywords": [],
-  "author": "",
+  "author": "J. Valeska",
   "private": true,
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.1",
@@ -25,6 +25,7 @@
     "@typechain/hardhat": "^8.0.0",
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
+    "buffer": "^6.0.3",
     "chai": "^4.3.7",
     "ethers": "^6.6.0",
     "hardhat": "^2.15.0",
@@ -35,7 +36,10 @@
     "typescript": "^5.1.3"
   },
   "dependencies": {
+    "@lit-protocol/encryption": "^2.2.25",
+    "@lit-protocol/lit-node-client": "^2.2.25",
     "@lit-protocol/sdk-browser": "^1.1.250",
+    "lit-js-sdk": "^1.1.250",
     "nft.storage": "^7.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

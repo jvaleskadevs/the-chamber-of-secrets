@@ -18,17 +18,22 @@ h2 {
   color: #f6f6f6;
 }
 
-p {
+p, label {
   margin: 0.2rem 0.66rem;
 }
 
-input {
+input, select, textarea {
   background-color: #f2f2f2;
   padding: 0.88rem 2.22rem;
   color: black;
   border-radius: 12px;
   margin: 0.33rem 1rem;
   font-size: 18px;
+}
+
+textarea {
+  display: block;
+  min-width: 40%;
 }
 
 input:hover {
@@ -44,9 +49,7 @@ input[type=text]:hover {
   border: 2px solid red;
 }
 
-input[type=text]:focus, input[type=text]:active {
-  border: 2px solid red;
-}
+
 
 button {
   padding: 0.88rem 2.22rem;
@@ -67,7 +70,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 90%;
+
 }
 
 .section {
@@ -76,12 +79,12 @@ button:hover {
   background-color: #121212;
   margin: 2rem auto;
   padding: 2rem 4rem;
-  max-width: 60%;
-  min-width: 60%;
+  max-width: 52%;
+  min-width: 52%;
   overflow-x: hidden;
 }
 
-.section p {
+.section p, .section label, .section input, .section select {
   padding: 0.66rem;
 }
 

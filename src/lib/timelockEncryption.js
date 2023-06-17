@@ -14,9 +14,9 @@ function getClient() {
   return client;
 }
 
-export async function encryptWithTimelock(plaintext, decryptionTime) {
+export async function encryptWithTimelock(plaintext, decryptionTime, isCID) {
   const params = await timelockParamsSchema.validate({ plaintext, decryptionTime });
-  return await encrypt(getClient(), params.plaintext, params.decryptionTime);
+  return await encrypt(getClient(), params.plaintext, params.decryptionTime, isCID);
 }
 
 export async function decryptWithTimelock(ciphertext) {
@@ -24,7 +24,7 @@ export async function decryptWithTimelock(ciphertext) {
   return await decrypt(getClient(), ciphertext);
 }
 
-async function encrypt(client, plaintext, decryptionTime) {
+async function encrypt(client, plaintext, decryptionTime, isCID) {
   const chainInfo = await client.chain().info();
   const roundNumber = roundAt(decryptionTime, chainInfo);
   const ciphertext = await timelockEncrypt(
@@ -35,7 +35,9 @@ async function encrypt(client, plaintext, decryptionTime) {
   return {
     plaintext,
     decryptionTime,
-    ciphertext
+    ciphertext,
+    type: isCID ? 'cid' : plaintext.split(":")[1].split(";")[0],
+    name: self.crypto.randomUUID()
   };  
 }
 

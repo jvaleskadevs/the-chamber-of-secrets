@@ -1,24 +1,11 @@
-export const SecretFile = ({ file, decryptFile, decryptedFileAsUrl }) => {
-  console.log(file);
-
-  const decrypt = async () => {
-    await decryptFile(file.encryptedFile, file.encryptedSymmetricKey);
-  }
-
+export const SecretFile = ({ file }) => {
   return (
     <div className="container-secretfile">
-      <h4>Filename: {file?.name}</h4>
-      <p>Encrypted file: {file?.encryptedFileAsString}</p>
-      <p>SymmetricKey: {file?.encryptedSymmetricKey}</p>
-      <p>Size: {file?.size}</p>
-      <button type="button" onClick={decrypt}>Decrypt</button>
+      <h4>New Filename: {file?.name}</h4>
+      <p>Type: {file?.type}</p>
+      <p>Encrypted file: {file?.ciphertext?.slice(0, 1200)}</p>
       
-      { decryptedFileAsUrl && (
-        <>  
-          <p>The file has been successfully decrypted as URL (base64):</p>
-          <a href={decryptedFileAsUrl}>{decryptedFileAsUrl}</a>
-        </>
-      )}
+      <small>Showing only 1200 first characters of the encrypted file</small>
     </div>
   );
 }
