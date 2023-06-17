@@ -128,6 +128,7 @@ function App () {
       console.log(decryptedFile);
       setDecryptedCoSFile(decryptedFile);
     } catch (err) {
+      alert(err.message);
       console.log(err);
     }  
   }
